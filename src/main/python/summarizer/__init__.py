@@ -15,6 +15,9 @@ Usage examples:
   summarizer 2025-09-05:2025-09-09 --input-dir ./notes --provider gemini \
     --model gemini-1.5-pro
 
+  # interactive mode for refinement
+  summarizer 2025-09-05 --interactive --max-iterations 3
+
 Provider/API keys:
   - OpenAI (ChatGPT): set environment variable OPENAI_API_KEY (or pass \
     --api-key)
@@ -48,5 +51,6 @@ Implementation notes:
 __version__ = "0.1.0"
 
 from .cli import main
+from .feedback import interactive_refinement_loop, get_user_feedback, refine_summary
 
-__all__ = ["main"]
+__all__ = ["main", "interactive_refinement_loop", "get_user_feedback", "refine_summary"]

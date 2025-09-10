@@ -8,6 +8,7 @@ from typing import Optional, Sequence
 from .file_ops import find_notes, trim_notes
 from .llm_clients import make_client
 from .prompts import build_prompt
+from .feedback import interactive_refinement_loop
 
 
 def parse_date_or_range(spec: str) -> tuple[dt.date, dt.date]:
@@ -26,7 +27,8 @@ def parse_date_or_range(spec: str) -> tuple[dt.date, dt.date]:
 def main(argv: Optional[Sequence[str]] = None) -> int:
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
-        description="Summarize JSON transcripts into a task-grouped Markdown report"
+        description=("Summarize JSON transcripts into a task-grouped Markdown "
+                     "report with optional interactive refinement")
     )
     parser.add_argument(
         "date_or_range",
@@ -65,6 +67,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         default=120_000,
         help="Soft limit on prompt size; older CONTEXT notes are dropped first",
     )
+    parser.add_argument(
+        "--interactive",
+        action="store_true",
+        help="Enable interactive feedback mode for summary refinement",
+    )
+    parser.add_argument(
+        "--max-iterations",
+        type=int,
+        default=5,
+        help="Maximum number of refinement iterations (default: 5)",
+    )
 
     args = parser.parse_args(argv)
 
@@ -85,10 +98,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     )
 
     client = make_client(args.provider, args.model, args.api_key)
-    summary_md = client.complete(prompt)
+    initial_summary = client.complete(prompt)
 
-    # Output to CLI
-    print(summary_md)
+    # Use interactive refinement if requested
+    if args.interactive:
+        print("Initial summary generated. Starting interactive refinement...")
+        summary_md = interactive_refinement_loop(
+            initial_summary, client, max_iterations=args.max_iterations
+        )
+    else:
+        summary_md = initial_summary
+        print(summary_md)
 
     # Offer to save
     try:
