@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Sync WhisperMac Global Recordings to Dropbox 
+
+Setup:
+    Link the safe_sync.sh script to $HOME/bin/safe_sync.sh
+       mkdir -p $HOME/bin && ln -s "$(pwd)/whispermac_sync/whispermac_sync.sh" "$HOME/bin/whispermac_sync.sh"
+
+    Link this file to ~/Library/LaunchAgents/com.user.syncwhispermac.plist
+       ln -s "$(pwd)/whispermac_sync/com.user.whispermacsync.plist" "$HOME/Library/LaunchAgents/com.user.whispermacsync.plist"
+   Load the script
+        launchctl load $HOME/Library/LaunchAgents/com.user.whispermacsync.plist
+
+To reload the sync:
+   Run `launchctl unload $HOME/Library/LaunchAgents/com.user.whispermacsync.plist && launchctl load $HOME/Library/LaunchAgents/com.user.whispermacsync.plist`
+
+Logs:
+   $HOME/Library/Logs/whispermacsync.out.log
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.user.whispermacsync</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>{{ env["HOME"] }}/bin/whispermac_sync.sh</string>
+    </array>
+    <key>WatchPaths</key>
+    <array>
+        <string>{{ env["HOME"] }}/Library/Application Support/MacWhisper/GlobalRecordings/</string>
+    </array>
+    <key>StandardErrorPath</key>
+    <string>{{ env["HOME"] }}/Library/Logs/whispermacsync.out.log</string>
+    <key>StandardOutPath</key>
+    <string>{{ env["HOME"] }}/Library/Logs/whispermacsync.out.log</string>
+</dict>
+</plist>
