@@ -56,14 +56,46 @@ def main():
     # Get the directory where this script is located
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
+    # Calculate repo root (two levels up from whispermac_sync/)
+    repo_root = os.path.abspath(os.path.join(script_dir, ".."))
+
+    # Get user input for source and destination directories
+    default_source = os.path.join(os.environ["HOME"], "Library/Application Support/MacWhisper/GlobalRecordings/")
+    default_dest = os.path.join(repo_root, "global_recordings_sync_watched")
+
+    print("\nConfigure WhisperMac sync directories:")
+    print(f"Default source: {default_source}")
+    source_dir = input(f"Source directory (press Enter for default): ").strip()
+    if not source_dir:
+        source_dir = default_source
+
+    print(f"Default destination: {default_dest}")
+    dest_dir = input(f"Destination directory (press Enter for default): ").strip()
+    if not dest_dir:
+        dest_dir = default_dest
+
+    # Resolve paths to absolute paths
+    source_dir = os.path.abspath(source_dir)
+    dest_dir = os.path.abspath(dest_dir)
+
+    print(f"\nUsing source: {source_dir}")
+    print(f"Using destination: {dest_dir}")
+
     # Set up Jinja2 environment
     env = Environment(loader=FileSystemLoader(script_dir))
+
+    # If the destination directory doesn't exist, create it
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+        print(f"Created destination directory: {dest_dir}")
+    else:
+        print(f"Destination directory already exists: {dest_dir}")
 
     # Load the template
     template = env.get_template("TEMPLATE.com.user.whispermacsync.plist")
 
-    # Render the template with environment variables
-    rendered = template.render(env=os.environ)
+    # Render the template with environment variables and user-provided paths
+    rendered = template.render(env=os.environ, source_dir=source_dir, dest_dir=dest_dir)
 
     # Write the output to the plist file
     output_path = os.path.join(script_dir, "com.user.whispermacsync.plist")

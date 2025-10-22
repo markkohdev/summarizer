@@ -1,8 +1,15 @@
 #!/usr/bin/env zsh
 
-# Paths to your source and destination directories
-SOURCE_DIR="$HOME/Library/Application Support/MacWhisper/GlobalRecordings/"
-DEST_DIR="$HOME/Library/CloudStorage/Dropbox/Note Systems/whispermac_work/global_recordings_sync_watched"
+# Paths to your source and destination directories (passed as arguments)
+SOURCE_DIR="$1"
+DEST_DIR="$2"
+
+# Validate arguments
+if [[ -z "$SOURCE_DIR" ]] || [[ -z "$DEST_DIR" ]]; then
+    echo "Error: Source and destination directories are required"
+    echo "Usage: $0 <source_dir> <dest_dir>"
+    exit 1
+fi
 
 # Find the newest file in the source directory
 LATEST_FILE=$(find "$SOURCE_DIR" -type f -mtime -1m -print0 | xargs -0 ls -t | head -n 1)

@@ -26,10 +26,12 @@ Logs:
     <array>
         <string>/bin/zsh</string>
         <string>{{ env["HOME"] }}/bin/whispermac_sync.sh</string>
+        <string>{{ source_dir }}</string>
+        <string>{{ dest_dir }}</string>
     </array>
     <key>WatchPaths</key>
     <array>
-        <string>{{ env["HOME"] }}/Library/Application Support/MacWhisper/GlobalRecordings/</string>
+        <string>{{ source_dir }}</string>
     </array>
     <key>StandardErrorPath</key>
     <string>{{ env["HOME"] }}/Library/Logs/whispermacsync.out.log</string>
