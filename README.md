@@ -56,6 +56,48 @@ The tool expects JSON files with a `text` field containing transcripts. It'll pa
 - `--interactive` - Enable interactive refinement mode
 - `--max-iterations` - Max refinement iterations (default: 5)
 
+## WhisperMac Sync Setup
+
+If you use [MacWhisper](https://goodsnooze.gumroad.com/l/macwhisper) for voice transcription, the included sync tool automatically copies new recordings to a watched directory for processing.
+
+### Setup
+
+Run the setup script:
+
+```shell
+cd whispermac_sync
+uv run setup.py
+```
+
+The script will:
+1. Prompt for source directory (defaults to MacWhisper's GlobalRecordings folder)
+2. Prompt for destination directory (defaults to `global_recordings_sync_watched/` in this repo)
+3. Generate the LaunchAgent plist file
+4. Optionally create symlinks to `~/bin/` and `~/Library/LaunchAgents/`
+5. Optionally load the LaunchAgent to start monitoring
+
+### How it works
+
+The LaunchAgent watches the source directory and triggers `whispermac_sync.sh` when new files appear. The script:
+- Finds the newest file modified in the last minute
+- Waits for the file size to stabilize (file is done writing)
+- Syncs it to the destination using `rsync --ignore-existing`
+
+Logs are written to `~/Library/Logs/whispermacsync.out.log`.
+
+### Managing the sync
+
+Reload the agent (after changing config):
+```shell
+launchctl unload ~/Library/LaunchAgents/com.user.whispermacsync.plist
+launchctl load ~/Library/LaunchAgents/com.user.whispermacsync.plist
+```
+
+Stop the agent:
+```shell
+launchctl unload ~/Library/LaunchAgents/com.user.whispermacsync.plist
+```
+
 ### Output Format
 
 Summaries are task-grouped markdown with:
