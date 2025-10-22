@@ -14,3 +14,6 @@ whispermac_sync/com.user.whispermacsync.plist
 
 # Summaries
 summaries/
+
+# Local watched folder
+global_recordings_sync_watched

@@ -24,24 +24,26 @@ Or with pip:
 pip install -e .
 ```
 
+If you use pip and install the summarizer as an editable package then you should remove the `uv run` prefix from the commands in the [Usage section](#usage).
+
 ## Usage
 
 Summarize transcripts for a single date:
 
 ```shell
-summarizer 2025-09-10 --input-dir ~/path/to/transcripts
+uv run summarizer 2025-09-10 --input-dir ~/path/to/transcripts
 ```
 
 Or a date range:
 
 ```shell
-summarizer 2025-09-08:2025-09-10 --input-dir ~/path/to/transcripts
+uv run summarizer 2025-09-08:2025-09-10 --input-dir ~/path/to/transcripts
 ```
 
 With interactive refinement:
 
 ```shell
-summarizer 2025-09-10 --input-dir ~/path/to/transcripts --interactive
+uv run summarizer 2025-09-10 --input-dir ~/path/to/transcripts --interactive
 ```
 
 The tool expects JSON files with a `text` field containing transcripts. It'll parse filenames to extract dates.
@@ -75,6 +77,11 @@ The script will:
 3. Generate the LaunchAgent plist file
 4. Optionally create symlinks to `~/bin/` and `~/Library/LaunchAgents/`
 5. Optionally load the LaunchAgent to start monitoring
+
+Next, set up a [WhisperMac Watched Folder](https://macwhisper.helpscoutdocs.com/article/35-automatically-transcribing-files-in-watch-folders) for the directory that you set as the global recording sync destination.  That will make it so that when an mp4 file is added to the sync directory WhisperMac will automatically transcribe the audio into.
+
+You should use the following watched folder configuration:
+![docs/img/watched-folder](docs/img/watched-folder.jpg)
 
 ### How it works
 
