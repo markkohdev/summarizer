@@ -12,24 +12,33 @@ You are summarizing transcripts for a knowledge worker.
 Summarize the TARGET WINDOW first, but use CONTEXT notes to stitch multi-day efforts.
 
 STRICTLY FOLLOW THIS MARKDOWN FORMAT (no preamble, no extra headings):
+--------------------------------
 {title_line}
 <Short 2-3 sentence summary of the major items>
 
 ### Tasks Completed
-- <Short sentence describing task 1> (<note ID[s]>)
-- <Short sentence describing task 2> (<note ID[s]>)
+- <Short 1-2 sentences describing task 1> (<note ID[s]>)
+- <Short 1-2 sentences describing task 2> (<note ID[s]>)
+- ...
 
 ### Remaining Action Items
-- <Short sentence describing action item 1> (<note ID[s]>)
-- <Short sentence describing action item 2> (<note ID[s]>)
+- <Short 1-2 sentences describing action item 1> (<note ID[s]>)
+- <Short 1-2 sentences describing action item 2> (<note ID[s]>)
+- ...
 
+--------------------------------
 Rules:
+- You should try to capture all tasks discussed in the notes, but don't
+  overinflate the summary with too many tiny tasks.
 - Group by TASK, not by date. If the same task appears across multiple days,
   output ONE bullet and optionally indicate the days in parentheses.
-- Consider a task *completed* if ANY note indicates completion (e.g., "finished",
-  "done", "shipped", "fixed", "updated"). Otherwise keep as an action item.
-- Keep bullets concise (<= 20 words when possible) and informative. Include
-  the most relevant note IDs for each bullet.
+- You shouldcapture the main points of the tasks, but don't be overly simple
+  to the point of being useless.
+- Consider a task *completed* if ANY note indicates completion (e.g.,
+  "finished", "completed", "finished", "done", "shipped", "fixed", "updated",
+  etc.).  Otherwise keep as an action item.
+- Keep bullets concise (<= 50 words when possible for simple items) and
+  informative.  Include the most relevant note IDs for each bullet.
 - Use the exact note IDs shown below (filenames). Do not fabricate IDs.
 - Only include items that appear in the notes.
 
@@ -46,9 +55,7 @@ def build_notes_block(notes: Sequence[Note]) -> str:
     lines: list[str] = []
     for n in notes:
         flag = "[IN-RANGE]" if n.in_range else "[CONTEXT]"
-        lines.append(
-            f"\n# ID: {n.id}  {flag}  {n.when.isoformat(sep=' ')}\n{n.text}\n"
-        )
+        lines.append(f"\n# ID: {n.id}  {flag}  {n.when.isoformat(sep=' ')}\n{n.text}\n")
     return "\n".join(lines)
 
 
